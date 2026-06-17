@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>和運廣告投放工具</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1c1e21;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header h1 .logo {
+    width: 32px;
+    height: 32px;
+    background: #1877f2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .header p {
+    margin-top: 6px;
+    color: #65676b;
+    font-size: 14px;
+    padding-left: 42px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1c1e21;
+    margin-bottom: 6px;
+  }
+
+  label .required {
+    color: #e41e3f;
+    margin-left: 2px;
+  }
+
+  label .hint {
+    font-weight: 400;
+    color: #65676b;
+    margin-left: 6px;
+  }
+
+  input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #dddfe2;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #1c1e21;
+    background: #f7f8fa;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+    font-family: inherit;
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #1877f2;
+    background: white;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .token-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .token-row input {
+    flex: 1;
+    font-size: 12px;
+    font-family: monospace;
+  }
+
+  .btn-secondary {
+    padding: 10px 14px;
+    background: #e4e6eb;
+    color: #1c1e21;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  .btn-secondary:hover { background: #d8dadf; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e4e6eb;
+    margin: 24px 0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #65676b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+
+  .preset-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e7f3ff;
+    color: #1877f2;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .preset-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: #1877f2;
+    border-radius: 50%;
+  }
+
+  .preset-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .preset-item {
+    background: #f0f2f5;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .preset-item .key {
+    color: #65676b;
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .preset-item .val {
+    color: #1c1e21;
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { background: #166fe5; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { background: #bec3c9; cursor: not-allowed; transform: none; }
+
+  .result {
+    margin-top: 16px;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    display: none;
+  }
+
+  .result.success {
+    background: #e6f4ea;
+    border: 1.5px solid #a8d5b5;
+    color: #1e7e34;
+    display: block;
+  }
+
+  .result.error {
+    background: #fdecea;
+    border: 1.5px solid #f5c6cb;
+    color: #c0392b;
+    display: block;
+  }
+
+  .result .result-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  .result .ad-id {
+    font-family: monospace;
+    font-size: 13px;
+    background: rgba(0,0,0,0.06);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .config-section {
+    margin-bottom: 20px;
+  }
+
+  .toggle-config {
+    background: none;
+    border: none;
+    color: #1877f2;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .config-fields {
+    margin-top: 14px;
+    display: none;
+  }
+
+  .config-fields.open {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>
+      <div class="logo">f</div>
+      和運廣告投放工具
+    </h1>
+    <p>貼上貼文網址，一鍵建立廣告</p>
+  </div>
+
+  <div class="card">
+
+    <!-- 設定區（可收合） -->
+    <div class="config-section">
+      <button class="toggle-config" onclick="toggleConfig()">
+        <span id="config-arrow">▶</span> API 設定
+      </button>
+      <div class="config-fields" id="config-fields">
+        <div style="height:14px"></div>
+        <div class="field">
+          <label>Access Token <span class="required">*</span></label>
+          <div class="token-row">
+            <input type="password" id="access-token" placeholder="EAAKw..." />
+            <button class="btn-secondary" onclick="toggleToken()">顯示</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Ad Account ID <span class="hint">預設已填入</span></label>
+          <input type="text" id="ad-account-id" value="771368965230073" />
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Ad Set ID <span class="hint">預設已填入</span></label>
+          <input type="text" id="adset-id" value="120245415588980694" />
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 固定輪廓說明 -->
+    <div class="section-label">固定廣告設定（沿用現有輪廓）</div>
+    <div class="preset-grid">
+      <div class="preset-item">
+        <div class="key">廣告組合</div>
+        <div class="val">效向廣帳II-1</div>
+      </div>
+      <div class="preset-item">
+        <div class="key">帳戶</div>
+        <div class="val">ShineTo II</div>
+      </div>
+      <div class="preset-item">
+        <div class="key">版位</div>
+        <div class="val">沿用原設定</div>
+      </div>
+      <div class="preset-item">
+        <div class="key">受眾</div>
+        <div class="val">沿用原設定</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 投放輸入 -->
+    <div class="section-label">這次要投放的內容</div>
+
+    <div class="field">
+      <label>廣告名稱 <span class="required">*</span></label>
+      <input type="text" id="ad-name" placeholder="例：2026-06 租車優惠貼文" />
+    </div>
+
+    <div class="field">
+      <label>
+        貼文網址或貼文 ID
+        <span class="required">*</span>
+        <span class="hint">Facebook 貼文的完整網址</span>
+      </label>
+      <input type="text" id="post-url" placeholder="https://www.facebook.com/permalink.php?story_fbid=..." />
+    </div>
+
+    <button class="btn-primary" id="submit-btn" onclick="createAd()">
+      🚀 建立廣告
+    </button>
+
+    <div class="result" id="result"></div>
+
+  </div>
+</div>
+
+<script>
+  // 預填 Token
+  const SAVED_TOKEN = '';
+
+  window.onload = () => {
+    if (SAVED_TOKEN) document.getElementById('access-token').value = SAVED_TOKEN;
+    // 第一次使用時展開設定
+    const token = localStorage.getItem('fb_token');
+    if (token) {
+      document.getElementById('access-token').value = token;
+    } else {
+      toggleConfig();
+    }
+  };
+
+  function toggleConfig() {
+    const fields = document.getElementById('config-fields');
+    const arrow = document.getElementById('config-arrow');
+    fields.classList.toggle('open');
+    arrow.textContent = fields.classList.contains('open') ? '▼' : '▶';
+  }
+
+  function toggleToken() {
+    const input = document.getElementById('access-token');
+    const btn = input.nextElementSibling;
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '隱藏';
+    } else {
+      input.type = 'password';
+      btn.textContent = '顯示';
+    }
+  }
+
+  function extractPostId(input) {
+    input = input.trim();
+    // 如果已經是純數字 ID
+    if (/^\d+$/.test(input)) return input;
+    // 從網址抽取 story_fbid
+    let m = input.match(/story_fbid=(\d+)/);
+    if (m) return m[1];
+    // /posts/數字
+    m = input.match(/\/posts\/(\d+)/);
+    if (m) return m[1];
+    // /permalink/數字
+    m = input.match(/\/permalink\/(\d+)/);
+    if (m) return m[1];
+    // pfbid 格式（新版）
+    m = input.match(/pfbid[\w]+/);
+    if (m) return m[0];
+    return null;
+  }
+
+  function showResult(type, title, body) {
+    const el = document.getElementById('result');
+    el.className = `result ${type}`;
+    el.innerHTML = `<div class="result-title">${title}</div>${body}`;
+  }
+
+  async function createAd() {
+    const token = document.getElementById('access-token').value.trim();
+    const adAccountId = document.getElementById('ad-account-id').value.trim();
+    const adsetId = document.getElementById('adset-id').value.trim();
+    const adName = document.getElementById('ad-name').value.trim();
+    const postUrl = document.getElementById('post-url').value.trim();
+
+    if (!token) { showResult('error', '請填入 Access Token', '點上方「API 設定」展開並填入 Token。'); return; }
+    if (!adName) { showResult('error', '請填入廣告名稱', ''); return; }
+    if (!postUrl) { showResult('error', '請填入貼文網址', ''); return; }
+
+    // 儲存 token（方便下次使用）
+    localStorage.setItem('fb_token', token);
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> 建立中...';
+
+    const resultEl = document.getElementById('result');
+    resultEl.className = 'result';
+
+    try {
+      // Step 1: 取得粉專 Page ID
+      const pageRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${token}`);
+      const pageData = await pageRes.json();
+
+      if (pageData.error) throw new Error(pageData.error.message);
+      if (!pageData.data || pageData.data.length === 0) throw new Error('找不到粉絲專頁，請確認 Token 有 pages_show_list 權限');
+
+      // 取第一個 Page（和運的粉專）
+      const page = pageData.data[0];
+      const pageId = page.id;
+      const pageAccessToken = page.access_token;
+
+      // Step 2: 抽取貼文 ID
+      const rawPostId = extractPostId(postUrl);
+      if (!rawPostId) throw new Error('無法解析貼文 ID，請確認網址格式');
+
+      // object_story_id 格式：pageId_postId
+      const objectStoryId = rawPostId.includes('_') ? rawPostId : `${pageId}_${rawPostId}`;
+
+      // Step 3: 建立 Ad Creative
+      const creativeRes = await fetch(`https://graph.facebook.com/v19.0/act_${adAccountId}/adcreatives`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${adName} - Creative`,
+          object_story_id: objectStoryId,
+          access_token: token
+        })
+      });
+      const creativeData = await creativeRes.json();
+      if (creativeData.error) throw new Error(`建立 Creative 失敗：${creativeData.error.message}`);
+
+      const creativeId = creativeData.id;
+
+      // Step 4: 建立 Ad
+      const adRes = await fetch(`https://graph.facebook.com/v19.0/act_${adAccountId}/ads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: adName,
+          adset_id: adsetId,
+          creative: { creative_id: creativeId },
+          status: 'ACTIVE',
+          access_token: token
+        })
+      });
+      const adData = await adRes.json();
+      if (adData.error) throw new Error(`建立廣告失敗：${adData.error.message}`);
+
+      showResult('success', '✅ 廣告已成功建立！', `
+        <div>廣告名稱：<strong>${adName}</strong></div>
+        <div>廣告 ID：<span class="ad-id">${adData.id}</span></div>
+        <div style="margin-top:8px;font-size:13px;color:#2d6a4f">廣告已設為 ACTIVE，正在 Facebook 審核中，通常幾分鐘內開始投放。</div>
+      `);
+
+      // 清空輸入
+      document.getElementById('ad-name').value = '';
+      document.getElementById('post-url').value = '';
+
+    } catch (err) {
+      showResult('error', '❌ 建立失敗', `${err.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🚀 建立廣告';
+    }
+  }
+</script>
+
+</body>
+</html>
