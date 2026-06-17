@@ -462,19 +462,10 @@
     resultEl.className = 'result';
 
     try {
-      // Step 1: 取得粉專 Page ID
-      const pageRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${token}`);
-      const pageData = await pageRes.json();
+      // 直接使用固定 Page ID（和運租車 easyrentclub）
+      const pageId = '217761698328619';
 
-      if (pageData.error) throw new Error(pageData.error.message);
-      if (!pageData.data || pageData.data.length === 0) throw new Error('找不到粉絲專頁，請確認 Token 有 pages_show_list 權限');
-
-      // 取第一個 Page（和運的粉專）
-      const page = pageData.data[0];
-      const pageId = page.id;
-      const pageAccessToken = page.access_token;
-
-      // Step 2: 抽取貼文 ID
+      // Step 1: 抽取貼文 ID
       const rawPostId = extractPostId(postUrl);
       if (!rawPostId) throw new Error('無法解析貼文 ID，請確認網址格式');
 
