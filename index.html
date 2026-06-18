@@ -502,7 +502,7 @@
         })
       });
       const adData = await adRes.json();
-      if (adData.error) throw new Error(`建立廣告失敗：${adData.error.message}`);
+      if (adData.error) throw new Error(`建立廣告失敗：${adData.error.message} (code: ${adData.error.code}, subcode: ${adData.error.error_subcode}, type: ${adData.error.type})`);
 
       showResult('success', '✅ 廣告已成功建立！', `
         <div>廣告名稱：<strong>${adName}</strong></div>
