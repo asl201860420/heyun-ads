@@ -417,9 +417,11 @@
 
   function extractPostId(input) {
     input = input.trim();
-    // 如果已經是純數字 ID
+    // pageId_postId 格式直接回傳
+    if (/^\d+_\d+$/.test(input)) return input;
+    // 純數字 ID
     if (/^\d+$/.test(input)) return input;
-    // 從網址抽取 story_fbid
+    // story_fbid
     let m = input.match(/story_fbid=(\d+)/);
     if (m) return m[1];
     // /posts/數字
@@ -428,7 +430,7 @@
     // /permalink/數字
     m = input.match(/\/permalink\/(\d+)/);
     if (m) return m[1];
-    // pfbid 格式（新版）
+    // pfbid 格式
     m = input.match(/pfbid[\w]+/);
     if (m) return m[0];
     return null;
